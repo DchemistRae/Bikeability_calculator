@@ -1,10 +1,11 @@
-from osmnxdata_mined import geodf as test, frb
+from osmnxdata_mined import res_intersection as test
 import re
 import pandas as pd
 import geopandas as gpd
 from shapely import wkt
 from orsdata_explore import connectivity, distance as tot_dist
 import numpy as np
+from osgeo import ogr
 
 #choose vars of interest for wrangling
 joined = test[['oneway', 'lanes', 'name','highway','maxspeed',
@@ -43,16 +44,35 @@ joined = gpd.GeoDataFrame(joined, geometry='geometry',crs={'init':'epsg:4326'})
 name = []
 dist = []
 weight = []
+coords = []
 for x in range(len(connectivity)):
     if connectivity[x]['name'] != '-':
         name.append(connectivity[x]['name'])
         dist.append(connectivity[x]['distance'])
+        coords.append(connectivity[x]['maneuver'][u'location'])
         weight.append(connectivity[x]['distance']/tot_dist)
   
-df = pd.DataFrame(list(zip(name, dist, weight)), 
-               columns =['name', 'distance','weight']) 
+df = pd.DataFrame(list(zip(name, dist, weight,coords)), 
+        columns =['name', 'distance','weight','coords']) 
 df['name'] =df.name.str.split(',').apply(lambda x: x[0])
 df.dtypes  
+
+###################################
+#PROBLEM POINT Trying to convert the coords to geometry to create a geopanda data
+
+geom = np.array(coords)
+line =ogr.Geometry(ogr.wkbLineString)
+for x,y in geom:
+    line.AddPoint(x,y)
+print(line.ExportToWkt())
+
+df['coords'] = df['coords'].astype(str)
+df['coords'] = df['coords'].str.replace(r'[^\w\s,]','')
+df[['long','lat']] = df['coords'].str.split(",",expand=True) 
+df['coords'] = df['coords'].apply(wkt.loads) #error not working
+
+
+########################################
 
 mergedwt =joined.merge(df, on='name') #merging selected only the streets in ors_route
 
