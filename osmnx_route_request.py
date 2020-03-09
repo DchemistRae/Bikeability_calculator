@@ -23,7 +23,7 @@ edges.columns
 edges['weight'] = edges.geometry.length
 
 #edges.dtypes
-len(edges.name.unique().tolist())
+# len(edges.name.unique().tolist())
 #Convert variables of interest to proper data type
 edges['maxspeed'] = pd.to_numeric(edges.maxspeed,errors='coerce', downcast='integer')
 edges['lanes'] =pd.to_numeric(edges.lanes,errors='coerce', downcast='integer')
@@ -37,4 +37,4 @@ def weighted_mean(arr_lst,wt_lst):
 
 avg_maxspeed =weighted_mean(edges['maxspeed'],edges['weight'])
 avg_nlanes = round(weighted_mean(edges.lanes,edges.weight))
-avg_oneway = round(weighted_mean(edges.oneway,edges.weight))
+avg_oneway = weighted_mean(edges.oneway,edges.weight) * 100

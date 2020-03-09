@@ -5,6 +5,9 @@ import osmnx as ox
 import pandas as pd
 import numpy as np
 
+from evaluate_helpers import weighted_avgfunc, weighted_mean
+
+
 def route_df(points, ors_key):
     ''' Create dataframe out
      of ors and osmnx data '''
@@ -22,6 +25,7 @@ def route_df(points, ors_key):
     #print(call.status_code, call.reason)
     #print(call.text)
     ans = call.json()
+
     with open("ors_route.geojson", "w") as file:
         json.dump(ans, file, indent=4)
 
@@ -39,18 +43,7 @@ def route_df(points, ors_key):
     suitability = extras['suitability']['summary']
     #connectivity = segments['steps']
     
-    
-    #Function for weighted average for routes with more that one connection
-    def weighted_avgfunc(var):
-            var_wt =[]
-            var_lst = []
-            for x in range(len(var)):
-                var_lst.append(var[x]['value'])
-            for y in range(len(var)):
-                var_amt = (var[y]['amount'])/100
-                var_wt.append(var_amt)
-            wt_var_avg =np.average(var_lst,weights=var_wt)
-            return wt_var_avg
+
 
     #Result extraction
     try:
@@ -132,10 +125,6 @@ def route_df(points, ors_key):
     edges.oneway = edges.oneway.astype(int)
     edges.name  = edges.name.astype(str)
     #weighted mean excluding nan / function
-    def weighted_mean(arr_lst,wt_lst):
-        indices = ~np.isnan(arr_lst)
-        avg_wt = np.average(arr_lst[indices],weights=wt_lst[indices])
-        return avg_wt
 
     avg_maxspeed = round(weighted_mean(edges['maxspeed'],edges['weight']))
     avg_nlanes = round(weighted_mean(edges.lanes,edges.weight))
@@ -159,6 +148,7 @@ def route_df(points, ors_key):
      "connection":street_connections
       }, ignore_index=True)
     return df
+
 
 
 
