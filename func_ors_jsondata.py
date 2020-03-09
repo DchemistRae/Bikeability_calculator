@@ -23,7 +23,7 @@ def dat_extract(points,ors_key):
     #print(call.status_code, call.reason)
     #print(call.text)
     ans = call.json()
-    with open("ans.json", "w") as file:
+    with open("ors_route.geojson", "w") as file:
         json.dump(ans, file, indent=4)
 
      

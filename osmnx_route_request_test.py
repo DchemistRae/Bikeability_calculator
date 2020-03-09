@@ -12,4 +12,3 @@ nodes, edges = ox.graph_to_gdfs(data)
 edges.plot()
 edges.columns
 # works!!!
-

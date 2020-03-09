@@ -3,6 +3,8 @@
 	average of openrouteservice results..
 ****	orsdata_explore.py is a script to explore the geojson data collected from
 	openrouteservice API
-****	osmnxdata_mined.py script, extracts road networks data converts it to 
-	shapefile and join it spatially to openrouteservice route.
-****	df_final cleans up the final data and calculates more weighted average.
+****	osmnx_route_request_test.py script, extracts road networks data for geometry 
+	supplied from buffered ors_route data.
+****	df_final creates a final dataframe with data from osmnx and ORS
+****    https://github.com/GIScience/openrouteservice-docs#routing-response
+	ORS data documentation

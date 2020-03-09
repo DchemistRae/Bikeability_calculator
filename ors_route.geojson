@@ -1,1 +1,755 @@
-{"type": "FeatureCollection", "features": [{"bbox": [7.850089, 47.995046, 7.856737, 48.003247], "type": "Feature", "properties": {"segments": [{"distance": 1570.5, "duration": 422.7, "steps": [{"distance": 124.0, "duration": 24.8, "type": 11, "instruction": "Head south on Habsburgerstra\u00dfe, B 3", "name": "Habsburgerstra\u00dfe, B 3", "way_points": [0, 6], "maneuver": {"location": [7.854562459596497, 48.003246606931484], "bearing_before": 0, "bearing_after": 190}}, {"distance": 187.2, "duration": 37.4, "type": 0, "instruction": "Turn left onto Hermann-Herder-Stra\u00dfe", "name": "Hermann-Herder-Stra\u00dfe", "way_points": [6, 11], "maneuver": {"location": [7.854350273035846, 48.002140551853344], "bearing_before": 187, "bearing_after": 109}}, {"distance": 329.9, "duration": 66.0, "type": 1, "instruction": "Turn right onto Karlstra\u00dfe", "name": "Karlstra\u00dfe", "way_points": [11, 19], "maneuver": {"location": [7.856737066583419, 48.00160969797395], "bearing_before": 109, "bearing_after": 189}}, {"distance": 124.2, "duration": 24.8, "type": 0, "instruction": "Turn left onto Bernhardstra\u00dfe", "name": "Bernhardstra\u00dfe", "way_points": [19, 20], "maneuver": {"location": [7.855106134454298, 47.99885410067858], "bearing_before": 203, "bearing_after": 112}}, {"distance": 197.7, "duration": 39.5, "type": 1, "instruction": "Turn right onto Jacob-Burckhardt-Stra\u00dfe", "name": "Jacob-Burckhardt-Stra\u00dfe", "way_points": [20, 35], "maneuver": {"location": [7.856658276691845, 47.99844413247207], "bearing_before": 112, "bearing_after": 200}}, {"distance": 188.2, "duration": 37.6, "type": 5, "instruction": "Turn slight right onto Auf der Zinnen", "name": "Auf der Zinnen", "way_points": [35, 49], "maneuver": {"location": [7.855551865448472, 47.99683704220139], "bearing_before": 219, "bearing_after": 245}}, {"distance": 147.7, "duration": 63.0, "type": 0, "instruction": "Turn left onto Conrad-Gr\u00f6ber-Stra\u00dfe", "name": "Conrad-Gr\u00f6ber-Stra\u00dfe", "way_points": [49, 57], "maneuver": {"location": [7.853252802489388, 47.997308291434685], "bearing_before": 281, "bearing_after": 205}}, {"distance": 159.7, "duration": 71.9, "type": 1, "instruction": "Turn right onto M\u00fcnsterplatz", "name": "M\u00fcnsterplatz", "way_points": [57, 61], "maneuver": {"location": [7.85239598570159, 47.99611154189955], "bearing_before": 218, "bearing_after": 300}}, {"distance": 63.7, "duration": 28.7, "type": 1, "instruction": "Turn right onto Schusterstra\u00dfe", "name": "Schusterstra\u00dfe", "way_points": [61, 66], "maneuver": {"location": [7.851136278759009, 47.99509565521245], "bearing_before": 219, "bearing_after": 305}}, {"distance": 48.1, "duration": 28.9, "type": 0, "instruction": "Turn left onto Kaiser-Joseph-Stra\u00dfe", "name": "Kaiser-Joseph-Stra\u00dfe", "way_points": [66, 69], "maneuver": {"location": [7.850426052147732, 47.995415098862686], "bearing_before": 307, "bearing_after": 213}}, {"distance": 0.0, "duration": 0.0, "type": 10, "instruction": "Arrive at Kaiser-Joseph-Stra\u00dfe, on the left", "name": "-", "way_points": [69, 69], "maneuver": {"bearing_before": 0, "bearing_after": 0}}], "detourfactor": 1.62, "percentage": 100.0, "avgspeed": 13.38}], "extras": {"waycategory": {"values": [[0, 6, 2], [6, 69, 0]], "summary": [{"value": 0.0, "distance": 1446.5, "amount": 92.1}, {"value": 2.0, "distance": 124.0, "amount": 7.9}]}, "surface": {"values": [[0, 49, 3], [49, 52, 14], [52, 69, 5]], "summary": [{"value": 3.0, "distance": 1151.3, "amount": 73.31}, {"value": 5.0, "distance": 381.1, "amount": 24.27}, {"value": 14.0, "distance": 38.1, "amount": 2.43}]}, "waytypes": {"values": [[0, 6, 1], [6, 20, 3], [20, 29, 2], [29, 30, 1], [30, 49, 3], [49, 69, 7]], "summary": [{"value": 3.0, "distance": 885.5, "amount": 56.39}, {"value": 7.0, "distance": 419.2, "amount": 26.69}, {"value": 1.0, "distance": 134.9, "amount": 8.59}, {"value": 2.0, "distance": 130.8, "amount": 8.33}]}, "steepness": {"values": [[0, 69, 0]], "summary": [{"value": 0.0, "distance": 1570.5, "amount": 100.0}]}, "suitability": {"values": [[0, 6, 5], [6, 29, 7], [29, 30, 5], [30, 66, 7], [66, 69, 6]], "summary": [{"value": 7.0, "distance": 1387.5, "amount": 88.35}, {"value": 5.0, "distance": 134.9, "amount": 8.59}, {"value": 6.0, "distance": 48.1, "amount": 3.06}]}}, "summary": {"distance": 1570.5, "duration": 422.7}, "way_points": [0, 69]}, "geometry": {"coordinates": [[7.854562, 48.003247], [7.854542, 48.003166], [7.854509, 48.002997], [7.854461, 48.002754], [7.854427, 48.002565], [7.854372, 48.002261], [7.85435, 48.002141], [7.854392, 48.002131], [7.854431, 48.002127], [7.854484, 48.002117], [7.85457, 48.002102], [7.856737, 48.00161], [7.856714, 48.001512], [7.856477, 48.001108], [7.856359, 48.000907], [7.856354, 48.0009], [7.856123, 48.000467], [7.856099, 48.000414], [7.855511, 47.999505], [7.855106, 47.998854], [7.856658, 47.998444], [7.856415, 47.997998], [7.856398, 47.997968], [7.856288, 47.997765], [7.856242, 47.997685], [7.856229, 47.997661], [7.856212, 47.997623], [7.856118, 47.99753], [7.856044, 47.997423], [7.855994, 47.997358], [7.855927, 47.997272], [7.855843, 47.997164], [7.855787, 47.99708], [7.855696, 47.996971], [7.855651, 47.996919], [7.855552, 47.996837], [7.855452, 47.996805], [7.855307, 47.996775], [7.855171, 47.996756], [7.855061, 47.996754], [7.854879, 47.996768], [7.854566, 47.996833], [7.854342, 47.996913], [7.854254, 47.996948], [7.854174, 47.99699], [7.853858, 47.997137], [7.853777, 47.997174], [7.853547, 47.997257], [7.853404, 47.997289], [7.853253, 47.997308], [7.853207, 47.997242], [7.853069, 47.997044], [7.853034, 47.996998], [7.852978, 47.996923], [7.852774, 47.996605], [7.85266, 47.996446], [7.852415, 47.996128], [7.852396, 47.996112], [7.852227, 47.996176], [7.85172, 47.995624], [7.851537, 47.995425], [7.851136, 47.995096], [7.851085, 47.995119], [7.850549, 47.99535], [7.850469, 47.995392], [7.850446, 47.995405], [7.850426, 47.995415], [7.850212, 47.995191], [7.850157, 47.995125], [7.850089, 47.995046]], "type": "LineString"}}], "bbox": [7.850089, 47.995046, 7.856737, 48.003247], "metadata": {"attribution": "openrouteservice.org | OpenStreetMap contributors", "service": "routing", "timestamp": 1583093382383, "query": {"coordinates": [[7.854559, 48.003247], [7.850182, 47.99501]], "profile": "cycling-regular", "preference": "recommended", "format": "geojson", "instructions": true, "instructions_format": "text", "attributes": ["avgspeed", "detourfactor", "percentage"], "maneuvers": true, "extra_info": ["steepness", "suitability", "surface", "waycategory", "waytype", "tollways", "traildifficulty"]}, "engine": {"version": "6.0.0", "build_date": "2020-01-16T14:32:36Z", "graph_date": "0000-00-00T00:00:00Z"}}}
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "bbox": [
+                7.850089,
+                47.995046,
+                7.856737,
+                48.003247
+            ],
+            "type": "Feature",
+            "properties": {
+                "segments": [
+                    {
+                        "distance": 1570.5,
+                        "duration": 422.7,
+                        "steps": [
+                            {
+                                "distance": 124.0,
+                                "duration": 24.8,
+                                "type": 11,
+                                "instruction": "Head south on Habsburgerstra\u00dfe, B 3",
+                                "name": "Habsburgerstra\u00dfe, B 3",
+                                "way_points": [
+                                    0,
+                                    6
+                                ],
+                                "maneuver": {
+                                    "location": [
+                                        7.854562459596497,
+                                        48.003246606931484
+                                    ],
+                                    "bearing_before": 0,
+                                    "bearing_after": 190
+                                }
+                            },
+                            {
+                                "distance": 187.2,
+                                "duration": 37.4,
+                                "type": 0,
+                                "instruction": "Turn left onto Hermann-Herder-Stra\u00dfe",
+                                "name": "Hermann-Herder-Stra\u00dfe",
+                                "way_points": [
+                                    6,
+                                    11
+                                ],
+                                "maneuver": {
+                                    "location": [
+                                        7.854350273035846,
+                                        48.002140551853344
+                                    ],
+                                    "bearing_before": 187,
+                                    "bearing_after": 109
+                                }
+                            },
+                            {
+                                "distance": 329.9,
+                                "duration": 66.0,
+                                "type": 1,
+                                "instruction": "Turn right onto Karlstra\u00dfe",
+                                "name": "Karlstra\u00dfe",
+                                "way_points": [
+                                    11,
+                                    19
+                                ],
+                                "maneuver": {
+                                    "location": [
+                                        7.856737066583419,
+                                        48.00160969797395
+                                    ],
+                                    "bearing_before": 109,
+                                    "bearing_after": 189
+                                }
+                            },
+                            {
+                                "distance": 124.2,
+                                "duration": 24.8,
+                                "type": 0,
+                                "instruction": "Turn left onto Bernhardstra\u00dfe",
+                                "name": "Bernhardstra\u00dfe",
+                                "way_points": [
+                                    19,
+                                    20
+                                ],
+                                "maneuver": {
+                                    "location": [
+                                        7.855106134454298,
+                                        47.99885410067858
+                                    ],
+                                    "bearing_before": 203,
+                                    "bearing_after": 112
+                                }
+                            },
+                            {
+                                "distance": 197.7,
+                                "duration": 39.5,
+                                "type": 1,
+                                "instruction": "Turn right onto Jacob-Burckhardt-Stra\u00dfe",
+                                "name": "Jacob-Burckhardt-Stra\u00dfe",
+                                "way_points": [
+                                    20,
+                                    35
+                                ],
+                                "maneuver": {
+                                    "location": [
+                                        7.856658276691845,
+                                        47.99844413247207
+                                    ],
+                                    "bearing_before": 112,
+                                    "bearing_after": 200
+                                }
+                            },
+                            {
+                                "distance": 188.2,
+                                "duration": 37.6,
+                                "type": 5,
+                                "instruction": "Turn slight right onto Auf der Zinnen",
+                                "name": "Auf der Zinnen",
+                                "way_points": [
+                                    35,
+                                    49
+                                ],
+                                "maneuver": {
+                                    "location": [
+                                        7.855551865448472,
+                                        47.99683704220139
+                                    ],
+                                    "bearing_before": 219,
+                                    "bearing_after": 245
+                                }
+                            },
+                            {
+                                "distance": 147.7,
+                                "duration": 63.0,
+                                "type": 0,
+                                "instruction": "Turn left onto Conrad-Gr\u00f6ber-Stra\u00dfe",
+                                "name": "Conrad-Gr\u00f6ber-Stra\u00dfe",
+                                "way_points": [
+                                    49,
+                                    57
+                                ],
+                                "maneuver": {
+                                    "location": [
+                                        7.853252802489388,
+                                        47.997308291434685
+                                    ],
+                                    "bearing_before": 281,
+                                    "bearing_after": 205
+                                }
+                            },
+                            {
+                                "distance": 159.7,
+                                "duration": 71.9,
+                                "type": 1,
+                                "instruction": "Turn right onto M\u00fcnsterplatz",
+                                "name": "M\u00fcnsterplatz",
+                                "way_points": [
+                                    57,
+                                    61
+                                ],
+                                "maneuver": {
+                                    "location": [
+                                        7.85239598570159,
+                                        47.99611154189955
+                                    ],
+                                    "bearing_before": 218,
+                                    "bearing_after": 300
+                                }
+                            },
+                            {
+                                "distance": 63.7,
+                                "duration": 28.7,
+                                "type": 1,
+                                "instruction": "Turn right onto Schusterstra\u00dfe",
+                                "name": "Schusterstra\u00dfe",
+                                "way_points": [
+                                    61,
+                                    66
+                                ],
+                                "maneuver": {
+                                    "location": [
+                                        7.851136278759009,
+                                        47.99509565521245
+                                    ],
+                                    "bearing_before": 219,
+                                    "bearing_after": 305
+                                }
+                            },
+                            {
+                                "distance": 48.1,
+                                "duration": 28.9,
+                                "type": 0,
+                                "instruction": "Turn left onto Kaiser-Joseph-Stra\u00dfe",
+                                "name": "Kaiser-Joseph-Stra\u00dfe",
+                                "way_points": [
+                                    66,
+                                    69
+                                ],
+                                "maneuver": {
+                                    "location": [
+                                        7.850426052147732,
+                                        47.995415098862686
+                                    ],
+                                    "bearing_before": 307,
+                                    "bearing_after": 213
+                                }
+                            },
+                            {
+                                "distance": 0.0,
+                                "duration": 0.0,
+                                "type": 10,
+                                "instruction": "Arrive at Kaiser-Joseph-Stra\u00dfe, on the left",
+                                "name": "-",
+                                "way_points": [
+                                    69,
+                                    69
+                                ],
+                                "maneuver": {
+                                    "bearing_before": 0,
+                                    "bearing_after": 0
+                                }
+                            }
+                        ],
+                        "detourfactor": 1.62,
+                        "percentage": 100.0,
+                        "avgspeed": 13.38
+                    }
+                ],
+                "extras": {
+                    "waycategory": {
+                        "values": [
+                            [
+                                0,
+                                6,
+                                2
+                            ],
+                            [
+                                6,
+                                69,
+                                0
+                            ]
+                        ],
+                        "summary": [
+                            {
+                                "value": 0.0,
+                                "distance": 1446.5,
+                                "amount": 92.1
+                            },
+                            {
+                                "value": 2.0,
+                                "distance": 124.0,
+                                "amount": 7.9
+                            }
+                        ]
+                    },
+                    "surface": {
+                        "values": [
+                            [
+                                0,
+                                49,
+                                3
+                            ],
+                            [
+                                49,
+                                52,
+                                14
+                            ],
+                            [
+                                52,
+                                69,
+                                5
+                            ]
+                        ],
+                        "summary": [
+                            {
+                                "value": 3.0,
+                                "distance": 1151.3,
+                                "amount": 73.31
+                            },
+                            {
+                                "value": 5.0,
+                                "distance": 381.1,
+                                "amount": 24.27
+                            },
+                            {
+                                "value": 14.0,
+                                "distance": 38.1,
+                                "amount": 2.43
+                            }
+                        ]
+                    },
+                    "waytypes": {
+                        "values": [
+                            [
+                                0,
+                                6,
+                                1
+                            ],
+                            [
+                                6,
+                                20,
+                                3
+                            ],
+                            [
+                                20,
+                                29,
+                                2
+                            ],
+                            [
+                                29,
+                                30,
+                                1
+                            ],
+                            [
+                                30,
+                                49,
+                                3
+                            ],
+                            [
+                                49,
+                                69,
+                                7
+                            ]
+                        ],
+                        "summary": [
+                            {
+                                "value": 3.0,
+                                "distance": 885.5,
+                                "amount": 56.39
+                            },
+                            {
+                                "value": 7.0,
+                                "distance": 419.2,
+                                "amount": 26.69
+                            },
+                            {
+                                "value": 1.0,
+                                "distance": 134.9,
+                                "amount": 8.59
+                            },
+                            {
+                                "value": 2.0,
+                                "distance": 130.8,
+                                "amount": 8.33
+                            }
+                        ]
+                    },
+                    "steepness": {
+                        "values": [
+                            [
+                                0,
+                                69,
+                                0
+                            ]
+                        ],
+                        "summary": [
+                            {
+                                "value": 0.0,
+                                "distance": 1570.5,
+                                "amount": 100.0
+                            }
+                        ]
+                    },
+                    "suitability": {
+                        "values": [
+                            [
+                                0,
+                                6,
+                                5
+                            ],
+                            [
+                                6,
+                                29,
+                                7
+                            ],
+                            [
+                                29,
+                                30,
+                                5
+                            ],
+                            [
+                                30,
+                                66,
+                                7
+                            ],
+                            [
+                                66,
+                                69,
+                                6
+                            ]
+                        ],
+                        "summary": [
+                            {
+                                "value": 7.0,
+                                "distance": 1387.5,
+                                "amount": 88.35
+                            },
+                            {
+                                "value": 5.0,
+                                "distance": 134.9,
+                                "amount": 8.59
+                            },
+                            {
+                                "value": 6.0,
+                                "distance": 48.1,
+                                "amount": 3.06
+                            }
+                        ]
+                    }
+                },
+                "summary": {
+                    "distance": 1570.5,
+                    "duration": 422.7
+                },
+                "way_points": [
+                    0,
+                    69
+                ]
+            },
+            "geometry": {
+                "coordinates": [
+                    [
+                        7.854562,
+                        48.003247
+                    ],
+                    [
+                        7.854542,
+                        48.003166
+                    ],
+                    [
+                        7.854509,
+                        48.002997
+                    ],
+                    [
+                        7.854461,
+                        48.002754
+                    ],
+                    [
+                        7.854427,
+                        48.002565
+                    ],
+                    [
+                        7.854372,
+                        48.002261
+                    ],
+                    [
+                        7.85435,
+                        48.002141
+                    ],
+                    [
+                        7.854392,
+                        48.002131
+                    ],
+                    [
+                        7.854431,
+                        48.002127
+                    ],
+                    [
+                        7.854484,
+                        48.002117
+                    ],
+                    [
+                        7.85457,
+                        48.002102
+                    ],
+                    [
+                        7.856737,
+                        48.00161
+                    ],
+                    [
+                        7.856714,
+                        48.001512
+                    ],
+                    [
+                        7.856477,
+                        48.001108
+                    ],
+                    [
+                        7.856359,
+                        48.000907
+                    ],
+                    [
+                        7.856354,
+                        48.0009
+                    ],
+                    [
+                        7.856123,
+                        48.000467
+                    ],
+                    [
+                        7.856099,
+                        48.000414
+                    ],
+                    [
+                        7.855511,
+                        47.999505
+                    ],
+                    [
+                        7.855106,
+                        47.998854
+                    ],
+                    [
+                        7.856658,
+                        47.998444
+                    ],
+                    [
+                        7.856415,
+                        47.997998
+                    ],
+                    [
+                        7.856398,
+                        47.997968
+                    ],
+                    [
+                        7.856288,
+                        47.997765
+                    ],
+                    [
+                        7.856242,
+                        47.997685
+                    ],
+                    [
+                        7.856229,
+                        47.997661
+                    ],
+                    [
+                        7.856212,
+                        47.997623
+                    ],
+                    [
+                        7.856118,
+                        47.99753
+                    ],
+                    [
+                        7.856044,
+                        47.997423
+                    ],
+                    [
+                        7.855994,
+                        47.997358
+                    ],
+                    [
+                        7.855927,
+                        47.997272
+                    ],
+                    [
+                        7.855843,
+                        47.997164
+                    ],
+                    [
+                        7.855787,
+                        47.99708
+                    ],
+                    [
+                        7.855696,
+                        47.996971
+                    ],
+                    [
+                        7.855651,
+                        47.996919
+                    ],
+                    [
+                        7.855552,
+                        47.996837
+                    ],
+                    [
+                        7.855452,
+                        47.996805
+                    ],
+                    [
+                        7.855307,
+                        47.996775
+                    ],
+                    [
+                        7.855171,
+                        47.996756
+                    ],
+                    [
+                        7.855061,
+                        47.996754
+                    ],
+                    [
+                        7.854879,
+                        47.996768
+                    ],
+                    [
+                        7.854566,
+                        47.996833
+                    ],
+                    [
+                        7.854342,
+                        47.996913
+                    ],
+                    [
+                        7.854254,
+                        47.996948
+                    ],
+                    [
+                        7.854174,
+                        47.99699
+                    ],
+                    [
+                        7.853858,
+                        47.997137
+                    ],
+                    [
+                        7.853777,
+                        47.997174
+                    ],
+                    [
+                        7.853547,
+                        47.997257
+                    ],
+                    [
+                        7.853404,
+                        47.997289
+                    ],
+                    [
+                        7.853253,
+                        47.997308
+                    ],
+                    [
+                        7.853207,
+                        47.997242
+                    ],
+                    [
+                        7.853069,
+                        47.997044
+                    ],
+                    [
+                        7.853034,
+                        47.996998
+                    ],
+                    [
+                        7.852978,
+                        47.996923
+                    ],
+                    [
+                        7.852774,
+                        47.996605
+                    ],
+                    [
+                        7.85266,
+                        47.996446
+                    ],
+                    [
+                        7.852415,
+                        47.996128
+                    ],
+                    [
+                        7.852396,
+                        47.996112
+                    ],
+                    [
+                        7.852227,
+                        47.996176
+                    ],
+                    [
+                        7.85172,
+                        47.995624
+                    ],
+                    [
+                        7.851537,
+                        47.995425
+                    ],
+                    [
+                        7.851136,
+                        47.995096
+                    ],
+                    [
+                        7.851085,
+                        47.995119
+                    ],
+                    [
+                        7.850549,
+                        47.99535
+                    ],
+                    [
+                        7.850469,
+                        47.995392
+                    ],
+                    [
+                        7.850446,
+                        47.995405
+                    ],
+                    [
+                        7.850426,
+                        47.995415
+                    ],
+                    [
+                        7.850212,
+                        47.995191
+                    ],
+                    [
+                        7.850157,
+                        47.995125
+                    ],
+                    [
+                        7.850089,
+                        47.995046
+                    ]
+                ],
+                "type": "LineString"
+            }
+        }
+    ],
+    "bbox": [
+        7.850089,
+        47.995046,
+        7.856737,
+        48.003247
+    ],
+    "metadata": {
+        "attribution": "openrouteservice.org | OpenStreetMap contributors",
+        "service": "routing",
+        "timestamp": 1583692520327,
+        "query": {
+            "coordinates": [
+                [
+                    7.854559,
+                    48.003247
+                ],
+                [
+                    7.850182,
+                    47.99501
+                ]
+            ],
+            "profile": "cycling-regular",
+            "preference": "recommended",
+            "format": "geojson",
+            "instructions": true,
+            "instructions_format": "text",
+            "roundabout_exits": true,
+            "attributes": [
+                "avgspeed",
+                "detourfactor",
+                "percentage"
+            ],
+            "maneuvers": true,
+            "extra_info": [
+                "steepness",
+                "suitability",
+                "surface",
+                "waytype",
+                "waycategory",
+                "countryinfo"
+            ]
+        },
+        "engine": {
+            "version": "6.0.0",
+            "build_date": "2020-01-16T14:32:36Z",
+            "graph_date": "0000-00-00T00:00:00Z"
+        }
+    }
+}
