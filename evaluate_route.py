@@ -3,7 +3,6 @@ import requests, json
 import geopandas as gpd
 import osmnx as ox
 import pandas as pd
-import numpy as np
 
 from evaluate_helpers import weighted_avgfunc, weighted_mean
 
@@ -151,9 +150,4 @@ def route_df(points, ors_key):
 
 
 
-
-stuttgart_airport =[[9.19515,48.690494],[7.850182, 47.99501]]
-points = [[7.854559, 48.003247],[7.850182, 47.99501]]
-ors_key = '5b3ce3597851110001cf6248480fc21010a54f35ad5e49b6d97490fb'
-route_df(points,ors_key)
 

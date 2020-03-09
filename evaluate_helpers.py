@@ -1,4 +1,7 @@
 #Function for weighted average for routes with more that one connection
+
+import numpy as np
+
 def weighted_avgfunc(var):
         var_wt =[]
         var_lst = []
