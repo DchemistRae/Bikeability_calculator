@@ -97,3 +97,39 @@ weighted_avgfunc(waycategory)
 weighted_avgfunc(waytypes)
 weighted_avgfunc(steepness)
 weighted_avgfunc(suitability)
+
+waytype_map = {1:7, 2:7, 3:4, 4:7, 5:7, 6:10, 7:4, 8:2, 9:1, 10:2}
+for items in waytypes:
+    items['value'] = waytype_map.get(items['value'],0)
+
+surface_map = {1:10, 2:8, 3:10, 4:10, 5:5, 6:6, 7:4, 8:10, 9:9,
+                10:7, 11:6, 12:7, 13:2, 14:7, 15:4, 16:2, 17:5}
+for items in surface_type:
+    items['value'] = surface_map.get(items['value'],0)
+
+
+
+
+
+for items in waytypes:
+    if items['value'] == 1:
+        items['value'] = 7
+    elif items['value'] == 2:
+        items['value'] = 7
+    elif items['value'] == 3:
+        items['value'] = 4
+    elif items['value'] == 4:
+        items['value'] = 7
+    elif items['value'] == 5:
+        items['value'] = 7
+    elif items['value'] == 6:
+        items['value'] = 10
+    elif items['value'] == 7:
+        items['value'] = 4
+    elif items['value'] == 8:
+        items['value'] = 2
+    elif items['value'] == 9:
+        items['value'] = 1
+    else:
+        if items['value'] == 10:
+            items['value'] = 2

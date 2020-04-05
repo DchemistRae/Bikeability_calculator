@@ -11,8 +11,11 @@ def route_df(coords, ors_key):
     ''' Create dataframe out
      of ors and osmnx data '''
 
+    waytype_map = {1:7, 2:7, 3:4, 4:7, 5:7, 6:10, 7:4, 8:2, 9:1, 10:2}
+    surface_map = {1:10, 2:8, 3:10, 4:10, 5:5, 6:6, 7:4, 8:10, 9:9,
+                10:7, 11:6, 12:7, 13:2, 14:7, 15:4, 16:2, 17:5}
 
-    df = pd.DataFrame(columns=('distance', 'duration', 'surface_type','waycategory',
+    df = pd.DataFrame(columns=('distance', 'duration', 'surface_type',
         'waytypes','steepness','suitability','maxspeed','lanes','oneway','connection'))
   
     for i in range(len(coords)):
@@ -41,15 +44,23 @@ def route_df(coords, ors_key):
         distance =propties['summary']['distance']
         duration =propties['summary']['duration']
         surface_type = extras['surface']['summary']
-        waycategory = extras['waycategory']['summary']
+        #waycategory = extras['waycategory']['summary']
         waytypes = extras['waytypes']['summary']
         steepness = extras['steepness']['summary']
         suitability = extras['suitability']['summary']
         #connectivity = segments['steps']
-            
+
+        #map surface and waytype to numbers 1(worst) to 10(best) and 0(unknown)  
+        
+        for items in waytypes:
+            items['value'] = waytype_map.get(items['value'],items['value'])
+
+        for item in surface_type:
+            item['value'] = surface_map.get(item['value'],item['value'])
+        
         #Result extraction
         wt_surface_type_avg = weighted_avgfunc(surface_type)
-        wt_category_avg = weighted_avgfunc(waycategory)
+        #wt_category_avg = weighted_avgfunc(waycategory)
         wt_waytypes_avg = weighted_avgfunc(waytypes)
         wt_steep_avg = weighted_avgfunc(steepness)
         wt_suitability_avg = weighted_avgfunc(suitability)
@@ -72,7 +83,13 @@ def route_df(coords, ors_key):
         #Add weightings as a new column length
         edges['weight'] = edges.geometry.length
         #Convert variables of interest to proper data type
-        edges['maxspeed'] = pd.to_numeric(edges.maxspeed,errors='coerce', downcast='integer')
+        try:
+            edges['maxspeed'] = pd.to_numeric(edges.maxspeed,errors='coerce', downcast='integer')
+        except AttributeError as e:
+            print(e)
+        finally:
+                pass
+
         try:
             edges['lanes'] =pd.to_numeric(edges.lanes,errors='coerce', downcast='integer')
         except AttributeError as e:
@@ -83,7 +100,12 @@ def route_df(coords, ors_key):
         edges.name  = edges.name.astype(str)
 
         #weighted mean excluding nan / function
-        avg_maxspeed = round(weighted_mean(edges['maxspeed'],edges['weight']))
+        try:
+            avg_maxspeed = round(weighted_mean(edges['maxspeed'],edges['weight']))
+        except AttributeError as e:
+            print(e)
+        finally:
+            pass
         try:
             avg_nlanes = round(weighted_mean(edges.lanes,edges.weight))
         except AttributeError as e:
@@ -99,7 +121,7 @@ def route_df(coords, ors_key):
         "distance": distance,
         "duration": duration,
         "surface_type": wt_surface_type_avg,
-        "waycategory": wt_category_avg,
+        #"waycategory": wt_category_avg,
         "waytypes": wt_waytypes_avg,
         "steepness": wt_steep_avg,
         "suitability": wt_suitability_avg,
