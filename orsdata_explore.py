@@ -1,6 +1,7 @@
 import openrouteservice
 from openrouteservice import convert
 import json
+from geopy.distance import geodesic
 
 #Get ORS route as geojson file
 start = [7.854559, 48.003247]
@@ -60,6 +61,9 @@ print(*steepness, sep = '\n')
 suitability = extras['suitability']['summary']
 print(suitability)
 print(*suitability, sep = '\n')
+
+#As crow flies distance
+crowdistance = geodesic(end, start).meters
 
 #from segments
 propties['segments'][0].keys()

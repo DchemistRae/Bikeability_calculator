@@ -25,7 +25,12 @@ edges['weight'] = edges.geometry.length
 #edges.dtypes
 # len(edges.name.unique().tolist())
 #Convert variables of interest to proper data type
-edges['maxspeed'] = pd.to_numeric(edges.maxspeed,errors='coerce', downcast='integer')
+
+#edges.maxspeed = edges.maxspeed.fillna(0)
+#edges.maxspeed = edges.maxspeed.astype(int)
+maxspeed_map = {8:10, 10:10, 20:10, 30:9, 40:8, 50:7, 60:6, 70:5, 80:4, 90:3, 100:2, 110:1}
+edges.maxspeed = edges["maxspeed"].map(maxspeed_map)
+edges['maxspeed'] = pd.to_numeric(edges.maxspeed,errors='coerce', downcast='signed')
 edges['lanes'] =pd.to_numeric(edges.lanes,errors='coerce', downcast='integer')
 edges.oneway = edges.oneway.astype(int)
 edges.name  = edges.name.astype(str)
@@ -38,3 +43,9 @@ def weighted_mean(arr_lst,wt_lst):
 avg_maxspeed =weighted_mean(edges['maxspeed'],edges['weight'])
 avg_nlanes = round(weighted_mean(edges.lanes,edges.weight))
 avg_oneway = weighted_mean(edges.oneway,edges.weight) * 100
+
+
+from geopy.distance import geodesic
+>>> newport_ri = (41.49008, -71.312796)
+>>> cleveland_oh = (41.499498, -81.695391)
+>>> print(geodesic(newport_ri, cleveland_oh).miles)
