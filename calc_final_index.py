@@ -28,11 +28,18 @@ def calc_bike_index(d_frame):
     return d_frame, mean_index
     
 
-    #d_frame = pd.read_csv('ams.csv')
-    #amsterdam_index = calc_bike_index(ams)
-    #amsterdam_index[0]
-    #amsterdam_index[1]
+    ams = pd.read_csv('ams.csv')
+    amsterdam_index = calc_bike_index(ams)
+    amsterdam_index[0]
+    amsterdam_index[1]
 
+    bern_result = calc_bike_index(pd.read_csv('bern.csv'))
+    bern_result[1]
+    bern_result[0]
+
+    test = calc_bike_index(pd.read_csv('test1.csv'))
+    test[1]
+    test[0]
 
 
 
