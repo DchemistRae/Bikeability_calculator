@@ -139,4 +139,5 @@ result_df = pd.read_csv('result_cities.csv')
 result_df.append(result, ignore_index=True)
 result_df.to_csv('result_cities.csv',index = False)
 
-
+#to add elevation
+ox.elevation.add_edge_grades(graph, add_absolute=True)
