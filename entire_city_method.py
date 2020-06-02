@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import networkx as nx
 
-place = "Berlin, Germany"
+place = "Helsinki, Finland"
 #place = "Emmendingen, Germany"
 
 # Create and set osmnx to select important tags
@@ -29,7 +29,7 @@ centrality = nx.degree_centrality(nx.line_graph(graph))
 nx.set_edge_attributes(graph, centrality, 'centrality')
 
 # Extract nodes and edges to geopandas from graph
-nodes, edges = ox.graph_to_gdfs(graph)
+edges = ox.graph_to_gdfs(graph, nodes= False)
 
 # Remove unwanted columns and add weight variable
 edges['weight'] = edges.geometry.length
@@ -51,31 +51,27 @@ df['oneway'] = df['oneway'].astype(int)
 # Dataframe cleaning and preprocessing
 # highway column
 df['highway'] = df['highway'].str.replace(r'[^\w\s-]', '')
-highway_cols = (pd.DataFrame(df.highway.str.split(' ', 3).tolist(),
-                             columns=['highway', 'highway1', 'highway2', 'highway3']))
+highway_cols = (pd.DataFrame(df.highway.str.split(' ', expand = True)))
 highway_map = ({'service': 6, 'None': np.nan, 'residential': 8, 'unclassified': 7, 'footway': 7, 'track': 5,
                 'tertiary': 6, 'living_street': 9, 'path': 5, 'pedestrian': 7, 'secondary': 5,
                 'primary': 2, 'steps': 2, 'cycleway': 10, 'rest_area': 5, 'primary_link': 2, 'ferry': 1,
                 'construction': 2, 'byway': 8, 'bridleway': 6, 'trunk': 2, 'trunk_link': 2, 'motorway': 1, 'motorway_link': 1})
-highway_cols['highway'] = highway_cols.highway.map(highway_map)
-highway_cols['highway1'] = highway_cols.highway1.map(highway_map)
-highway_cols['highway2'] = highway_cols.highway2.map(highway_map)
-highway_cols['highway3'] = highway_cols.highway3.map(highway_map)
+for column in highway_cols:
+    highway_cols[column] = highway_cols[column].map(highway_map)
 highway_cols['mean'] = np.nanmean(highway_cols, axis=1)
-df['highway'] = highway_cols['mean']
+df['highway'] = round(highway_cols['mean'])
 
 # surface column
 df['surface'] = df['surface'].str.replace(r'[^\w\s-]', '')
-surface_cols = (pd.DataFrame(df.surface.str.split(' ', 1).tolist(),
-                             columns=['surface', 'surface1']))
+surface_cols = (pd.DataFrame(df.surface.str.split(' ', expand = True)))
 surface_map = ({'asphalt': 10, 'paved': 10, 'cobblestone': 5, 'fine_gravel': 9,
                 'ground': 7, 'sett': 6, 'gravel': 7, 'metal': 6, 'compacted': 10,
                 'dirt': 6, 'paving_stones': 7, 'grass_paver': 5, 'unpaved': 8,
                 'pebblestone': 9, 'concrete': 10, 'grass': 5, 'mud': 1})
-surface_cols['surface'] = surface_cols.surface.map(surface_map)
-surface_cols['surface1'] = surface_cols.surface1.map(surface_map)
+for column in surface_cols:
+    surface_cols[column] = surface_cols[column].map(surface_map)
 surface_cols['mean'] = np.nanmean(surface_cols, axis=1)
-df['surface'] = surface_cols['mean']
+df['surface'] = round(surface_cols['mean'])
 
 # maxspeed column
 df.loc[df['maxspeed'] > 110, 'maxspeed'] = 110
@@ -129,15 +125,15 @@ mean_index = sum(d_frame['index'])/len(d_frame['index'])
 max_index = d_frame['index'].max()
 min_index = d_frame['index'].min()
 # Plot result
-plot = d_frame.plot(column = 'index',legend = True)
+#d_frame.plot(column = 'index',legend = True)
 
 #Result dictionary
 result = ({'place':place,'Average index':mean_index, 'max index':max_index,'min index':min_index})
 
 #Write result to file
 result_df = pd.read_csv('result_cities.csv')
-result_df.append(result, ignore_index=True)
+result_df =result_df.append(result, ignore_index=True)
 result_df.to_csv('result_cities.csv',index = False)
 
 #to add elevation
-ox.elevation.add_edge_grades(graph, add_absolute=True)
+#ox.elevation.add_edge_grades(graph, add_absolute=True)
