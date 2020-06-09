@@ -5,8 +5,9 @@ import osmnx as ox
 import pandas as pd
 import numpy as np
 import networkx as nx
+from os import path
 
-place = "Helsinki, Finland"
+place = 'Berlin, Germany'
 #place = "Emmendingen, Germany"
 
 # Create and set osmnx to select important tags
@@ -17,13 +18,13 @@ ox.utils.config(useful_tags_path=useful_tags_path)
 
 # Create basic city graph
 place_name = place
-graph = ox.graph_from_place(place_name)
+graph = ox.graph_from_place(place_name, network_type='bike',retain_all=True)
 
 # Plot graph of place
 #fig, ax = ox.plot_graph(graph)
 # plt.tight_layout()
 
-# Calculate edge closeness centrality(connectedness)
+# Calculate edge degree centrality(connectedness)
 centrality = nx.degree_centrality(nx.line_graph(graph))
 # add to edge attribute
 nx.set_edge_attributes(graph, centrality, 'centrality')
@@ -103,7 +104,7 @@ df['centrality_scaled'] = min_max_scaler.fit_transform(x)
 df['centrality_scaled'] = df['centrality_scaled'] * 10
 
 # Index calculation
-d_frame = df
+d_frame = df.copy()
 
 d_frame['surface'] = d_frame['surface'] * 0.140562249
 d_frame['highway'] = d_frame['highway'] * 0.269076305
@@ -121,19 +122,28 @@ d_frame['summation'] = (d_frame.loc[:, ['highway', 'surface',
 # Get a value between 0 and 100 for bikeability index (maximum weight is 60)
 d_frame['index'] = ((d_frame['summation'] * 100) / 10)
 # Final statistics index of city
-mean_index = sum(d_frame['index'])/len(d_frame['index'])
+mean_index = np.average(d_frame['index'],weights=d_frame['weight'])
 max_index = d_frame['index'].max()
 min_index = d_frame['index'].min()
+
 # Plot result
 #d_frame.plot(column = 'index',legend = True)
 
 #Result dictionary
-result = ({'place':place,'Average index':mean_index, 'max index':max_index,'min index':min_index})
+result = ({'place':place,'average_index':mean_index, 'max_index':max_index,'min_index':min_index})
 
-#Write result to file
-result_df = pd.read_csv('result_cities.csv')
-result_df =result_df.append(result, ignore_index=True)
-result_df.to_csv('result_cities.csv',index = False)
+#Save to file
+if path.exists("result_cities.csv"):
+    result_df = pd.read_csv('result_cities.csv')
+    result_df = result_df.append(result, ignore_index=True)
+    result_df.to_csv('result_cities.csv',index = False)
+else:
+    result_df = pd.DataFrame(columns= ('place','average_index','max_index','min_index'))
+    result_df = result_df.append(result, ignore_index=True)
+    result_df.to_csv('result_cities.csv',index = False)
 
-#to add elevation
-#ox.elevation.add_edge_grades(graph, add_absolute=True)
+
+
+###########
+#dna = d_frame.dropna()
+#np.average(dna['index'],weights=dna['weight'])

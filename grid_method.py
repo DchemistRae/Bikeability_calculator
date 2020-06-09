@@ -1,37 +1,40 @@
 import osmnx as ox 
 import networkx as nx 
+import pandas as pd 
 import geopandas as gpd
 import numpy as np 
 from sklearn import preprocessing
-from shapely.geometry import shape
+from shapely.geometry import shape, Polygon, Point
 import requests
 import geojson
-import pandas as pd 
 import shapely.wkt
-import shapely.geometry
+#import shapely.geometry
 from tqdm import tqdm
 from os import path
 
 #Get bounding box for place
-place_name = "Helsinki, Finland"
+place_name = 'Fort Collins, Colorado'
 area = ox.gdf_from_place(place_name)
-
-#divide into grids x = lon, y = lat
 xmin,ymin,xmax,ymax = area.total_bounds
 
-#create interval
-cols = np.linspace(ymin, ymax, num=5)
-rows = np.linspace(xmin, xmax, num=5)
+#divide into grids x = lon, y = lat and ensure point within geometry
+cols = np.linspace(ymin, ymax, num=6)
+rows = np.linspace(xmin, xmax, num=6)
 
-#create grid matrix list
 cell_centers = []
 for x in rows:
     for y in cols:
-        cell_centers.append([x,y])
+        p =Point(x,y)
+        if p.within(area.geometry.iloc[0]) == True:
+            cell_centers.append([x,y])
+
+#Initialize important variables
+dflist = []
+exception_counts = []
 
 for i in tqdm(range(len(cell_centers))):
     #Retrieve isochrones for center geometries of grids (change index)
-    body = {"locations":[cell_centers[i]],"range":[900],"attributes":["area","reachfactor","total_pop"],"intersections":"true","interval":900,"location_type":"start","range_type":"time","area_units":"m","units":"m"}
+    body = {"locations":[cell_centers[i] ],"range":[900],"attributes":["area","reachfactor","total_pop"],"intersections":"true","interval":900,"location_type":"start","range_type":"time","area_units":"m","units":"m"}
     #print('step {} of {}'.format(i+1, len(cell_centers)))
     headers = {
         'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
@@ -42,8 +45,18 @@ for i in tqdm(range(len(cell_centers))):
 
     #print(call.status_code, call.reason)
     #print(call.text)
-    output = call.json()
-    polys = output['features'][0]['geometry']
+    try:
+        output = call.json()
+        polys = output['features'][0]['geometry']
+        pass
+    except KeyError as e:
+        print('{} at grid {}, skip grid'.format(e, i+1))
+        exception_counts.append(i+1) 
+        continue 
+    except Exception as e:
+        print('{} at grid {}, skip grid'.format(e, i+1))
+        exception_counts.append(i+1) 
+        continue   
     geom = shape(polys)
     b =gpd.GeoDataFrame({'geometry':geom}, index=[0]) #polygon object returned
 
@@ -53,7 +66,7 @@ for i in tqdm(range(len(cell_centers))):
     'name', 'highway', 'maxspeed', 'service', 'access', 'area', 
     'landuse', 'width', 'est_width', 'junction', 'surface']                 
     ox.utils.config(useful_tags_path=useful_tags_path)
-    box_graph =ox.graph_from_polygon(b.geometry.iloc[0])
+    box_graph =ox.graph_from_polygon(b.geometry.iloc[0], network_type='bike',retain_all=True)
 
     # Plot graph of place
     #fig, ax = ox.plot_graph(box_graph)
@@ -70,12 +83,12 @@ for i in tqdm(range(len(cell_centers))):
     edges['weight'] = edges.geometry.length
     cols = (['highway', 'surface', 'maxspeed', 'weight', 'lanes', 'oneway',
             'width', 'centrality', 'geometry'])
-    
     try:
         df = edges[cols]
         pass
     except KeyError as e:
         print('{} at grid {}, skip grid'.format(e, i+1)) 
+        exception_counts.append(i+1) 
         continue      
             
     # Set appropriate data types
@@ -146,10 +159,8 @@ for i in tqdm(range(len(cell_centers))):
     df['centrality_scaled'] = df['centrality_scaled'] * 10
 
     # Index calculation
-    if i == 0: 
-        dflist = []
-        indexes = pd.Series(dtype='float64')
-    d_frame = df
+    
+    d_frame = df.copy()
 
     d_frame['surface'] = d_frame['surface'] * 0.140562249
     d_frame['highway'] = d_frame['highway'] * 0.269076305
@@ -166,30 +177,34 @@ for i in tqdm(range(len(cell_centers))):
     # Get a value between 0 and 100 for bikeability index (maximum weight is 60)
     d_frame['index'] = ((d_frame['summation'] * 100) / 10)
     dflist.append(d_frame)
-    indexes = indexes.append(d_frame['index'], ignore_index=True)
     
-# Final statistics index of city
-mean_index = sum(indexes)/len(indexes)
-max_index = indexes.max()
-min_index = indexes.min()
-
-#result in dictionary
-results = ({'place':place_name,'average_index':mean_index, 'max_index':max_index,'min_index':min_index})
+#Final statistics index of city in dictionary
+df_indexes = pd.concat(dflist)
+results = ({'place':place_name,
+'average_index':np.average(df_indexes['index'],weights=df_indexes['weight']),
+'max_index':df_indexes['index'].max(), 
+'min_index':df_indexes['index'].min(),
+'std_index':df_indexes['index'].std(),
+'grids':len(cell_centers),
+'nsegments':len(df_indexes),
+'unused_grids':len(exception_counts)  })
 
 # Plot result
 #plot = d_frame.plot(column = 'index',legend = True)
+
 #Save to file
 if path.exists("result_grid.csv"):
     result_d = pd.read_csv('result_grid.csv')
     result_d = result_d.append(results, ignore_index=True)
     result_d.to_csv('result_grid.csv',index = False)
 else:
-    result_d = pd.DataFrame(columns= ('place','average_index','max_index','min_index'))
+    result_d = pd.DataFrame(columns= ('place','average_index','max_index','min_index','std_index'))
     result_d = result_d.append(results, ignore_index=True)
     result_d.to_csv('result_grid.csv',index = False)
-      
-  
 
+#Save dataframe to file as well 
+#df_indexes.to_csv('index_data\{}_index.csv'.format(place_name.split(',')[0]))
+  
 
 
 
