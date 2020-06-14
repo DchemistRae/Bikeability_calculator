@@ -3,24 +3,39 @@ from shapely.geometry import Polygon, Point
 import numpy as np
 import osmnx as ox 
 
-place_name = 'Berlin, Germany'
+place_name = 'Emmendingen, Germany'
 area = ox.gdf_from_place(place_name)
 
 #Create grids
 xmin,ymin,xmax,ymax = area.total_bounds #x = lon, y = lat
+area.plot()
+
+#deflate bbox
+ymin = ymin + (0.8 *(ymin))
+ymax = ymax - (0.8 * (ymax))
+xmin = xmin + (0.8*(xmin))
+xmax = xmax - (0.8*(xmax))
+
 
 
 cols = np.linspace(ymin, ymax, num=6)
 rows = np.linspace(xmin, xmax, num=6)
 
+geompoints = []
 cell_centers = []
 for x in rows:
     for y in cols:
         p =Point(x,y)
         if p.within(area.geometry.iloc[0]) == True:
             cell_centers.append([x,y])
+            geompoints.append(p)
         
-        
+for l in cell_centers:
+    l.reverse()
+ cell_centers.replace(r'[^\w\s-]', '')
+ox.pois_from_point(cell_centers[0], distance= 1000)
+
+
         
         gls.append(p)
         ls.append((cell_centers[i]))
@@ -63,7 +78,7 @@ for i in range(cols):
     XrightOrigin = XrightOrigin + width
 
 
-grid = gpd.GeoDataFrame({'geometry':polygons})
+grid = gpd.GeoDataFrame({'geometry':geompoints})
 grid.crs = {'init': 'epsg:4326', 'no_defs': True}
 grid =grid.to_crs(epsg=4326)
 grid.to_crs(epsg=4839)
@@ -88,7 +103,7 @@ for i in range(len(polygons)):
 
 graph = ox.graph_from_place(place_name)
 fig, ax = ox.plot_graph(graph)
-(polygons[0].area * 6)/1e+6
+(geompoints[0].area * 6)/1e+6
 grid['geometry'].to_crs({'init': 'epsg:3395'})\
                .map(lambda p: p.area / 10**6)
 
