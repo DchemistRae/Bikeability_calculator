@@ -10,20 +10,36 @@ from tqdm import tqdm
 from os import path
 
 #Get bounding box for place
-place_name = 'Bremen, Germany'
+place_name = 'Montreal, Canada'
 area = ox.gdf_from_place(place_name)
 xmin,ymin,xmax,ymax = area.total_bounds
 
-#divide into grids x = lon, y = lat and ensure point within geometry
-cols = np.linspace(ymin, ymax, num=6)
-rows = np.linspace(xmin, xmax, num=6)
+#divide into grids x = lon, y = lat 
+height = 0.041667
+width = 0.041667
+rows = int(np.ceil((ymax-ymin) /  height))
+cols = int(np.ceil((xmax-xmin) / width))
+XleftOrigin = xmin
+XrightOrigin = xmin + width
+YtopOrigin = ymax
+YbottomOrigin = ymax- height
+polygons = []
+for i in range(cols):
+    Ytop = YtopOrigin
+    Ybottom =YbottomOrigin
+    for j in range(rows):
+        polygons.append(Polygon([(XleftOrigin, Ytop), (XrightOrigin, Ytop), (XrightOrigin, Ybottom), (XleftOrigin, Ybottom)])) 
+        Ytop = Ytop - height
+        Ybottom = Ybottom - height
+    XleftOrigin = XleftOrigin + width
+    XrightOrigin = XrightOrigin + width
 
+#Ensure the grids are within the polygon
 cell_centers = []
-for x in rows:
-    for y in cols:
-        p =Point(x,y)
-        if p.within(area.geometry.iloc[0]) == True:
-            cell_centers.append([x,y])
+for i in range(len(polygons)):
+    p = Point(polygons[i].centroid.x, polygons[i].centroid.y)
+    if p.within(area.geometry.iloc[0]) == True:
+        cell_centers.append([polygons[i].centroid.x, polygons[i].centroid.y])
 
 #Initialize important variables
 dflist = []
@@ -131,7 +147,7 @@ for i in tqdm(range(len(cell_centers))):
         cycleway_cols[column] = cycleway_cols[column].map(cycleway_map)
     cycleway_cols['mean'] = np.nanmean(cycleway_cols, axis=1)
     df['cycleway'] = round(cycleway_cols['mean'])
-    df['cycleway'] =df['cycleway'].fillna(df['highway']) #replace na with highway vlues
+    #df['cycleway'] =df['cycleway'].fillna(df['highway']) #replace na with highway vlues
 
     # surface column
     df['surface'] = df['surface'].str.replace(r'[^\w\s-]', '')
@@ -178,21 +194,23 @@ for i in tqdm(range(len(cell_centers))):
     
     d_frame = df.copy()
 
-    d_frame['cycleway'] = d_frame['cycleway'] * 0.269076305
-    d_frame['surface'] = d_frame['surface'] * 0.140562249
-    d_frame['highway'] = d_frame['highway'] * 0.269076305
-    d_frame['maxspeed'] = d_frame['maxspeed'] * 0.24497992
-    d_frame['lanes'] = d_frame['lanes'] * 0.140562249
-    d_frame['centrality_scaled'] = d_frame['centrality_scaled'] * 0.092369478
-    d_frame['width'] = d_frame['width'] * 0.112449799
+    d_frame['cycleway'] = d_frame['cycleway'] * 0.208074534
+    d_frame['surface'] = d_frame['surface'] * 0.108695652
+    d_frame['highway'] = d_frame['highway'] * 0.167701863
+    d_frame['maxspeed'] = d_frame['maxspeed'] * 0.189440994
+    d_frame['lanes'] = d_frame['lanes'] * 0.108695652
+    d_frame['centrality_scaled'] = d_frame['centrality_scaled'] * 0.071428571
+    d_frame['width'] = d_frame['width'] * 0.086956522
+    d_frame['oneway'] = d_frame['oneway'] * 0.059006211
+ 
 
     #sum important columns
-    d_frame['summation'] = (d_frame.loc[:, ['cycleway', 'surface',
-                                            'maxspeed', 'lanes', 'width',
+    d_frame['summation'] = (d_frame.loc[:, ['cycleway','highway', 'surface',
+                                            'maxspeed', 'lanes', 'width', 'oneway',
                                             'centrality_scaled']].sum(axis=1))
 
-    # Get a value between 0 and 100 for bikeability index (maximum weight is 60)
-    d_frame['index'] = ((d_frame['summation'] * 100) / 10)
+    # Get a value between 0 and 100 for bikeability index
+    d_frame['index'] = d_frame['summation'] * 10
     dflist.append(d_frame)
     
 #Final statistics index of city in dictionary
@@ -220,7 +238,7 @@ else:
     result_d.to_csv('result_grid.csv',index = False)
 
 #Save dataframe to file as well 
-#df_indexes.to_csv('index_data\{}_index.csv'.format(place_name.split(',')[0]))
+df_indexes.to_csv('index_data\{}_index.csv'.format(place_name.split(',')[0]))
   
 
 

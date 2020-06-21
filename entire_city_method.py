@@ -12,7 +12,7 @@ place = 'Berlin, Germany'
 
 # Create and set osmnx to select important tags
 useful_tags_path = ['bridge', 'tunnel', 'oneway', 'lanes', 'ref', 'name',
-                    'highway', 'maxspeed', 'service', 'access', 'area',
+                    'highway', 'maxspeed', 'service', 'access', 'area','cycleway',
                     'landuse', 'width', 'est_width', 'junction', 'surface']
 ox.utils.config(useful_tags_path=useful_tags_path)
 
@@ -34,7 +34,7 @@ edges = ox.graph_to_gdfs(graph, nodes= False)
 
 # Remove unwanted columns and add weight variable
 edges['weight'] = edges.geometry.length
-cols = (['highway', 'surface', 'maxspeed', 'weight', 'lanes', 'oneway',
+cols = (['highway', 'cycleway','surface', 'maxspeed', 'weight', 'lanes', 'oneway',
          'width', 'centrality', 'geometry'])
 df = edges[cols]
 
@@ -48,6 +48,7 @@ df['width'] = pd.to_numeric(
 df['highway'] = df['highway'].astype(str)
 df['surface'] = df['surface'].astype(str)
 df['oneway'] = df['oneway'].astype(int)
+df['cycleway'] = df['cycleway'].astype(str)
 
 # Dataframe cleaning and preprocessing
 # highway column
@@ -61,6 +62,18 @@ for column in highway_cols:
     highway_cols[column] = highway_cols[column].map(highway_map)
 highway_cols['mean'] = np.nanmean(highway_cols, axis=1)
 df['highway'] = round(highway_cols['mean'])
+
+#cycleway column
+df['cycleway'] = df['cycleway'].str.replace(r'[^\w\s-]', '')
+cycleway_cols = (pd.DataFrame(df.cycleway.str.split(' ', expand = True)))
+cycleway_map = ({'opposite':9, 'lane':9, 'share_busway':8, 'shared_lane':8,
+                'no':1, 'opposite_lane':9, 'crossing':10, 'track':10, 'designated':10,
+                'opposite_share_busway':8, 'seperate':10, 'shoulder':8})
+for column in cycleway_cols:
+    cycleway_cols[column] = cycleway_cols[column].map(cycleway_map)
+cycleway_cols['mean'] = np.nanmean(cycleway_cols, axis=1)
+df['cycleway'] = round(cycleway_cols['mean'])
+#df['cycleway'] =df['cycleway'].fillna(df['highway']) #replace na with highway vlues
 
 # surface column
 df['surface'] = df['surface'].str.replace(r'[^\w\s-]', '')
@@ -98,29 +111,29 @@ width_map = ({1: 1, 2: 2, 3: 5, 4: 7, 5: 9, 6: 10})
 df['width'] = df['width'].map(width_map)
 
 # normalize centrality column
-x = df[['centrality']].values.astype(float)
-min_max_scaler = preprocessing.MinMaxScaler()
-df['centrality_scaled'] = min_max_scaler.fit_transform(x)
+df['centrality_scaled'] =(df['centrality'] - np.min(df['centrality'])) / (np.max(df['centrality']) - np.min(df['centrality']))
 df['centrality_scaled'] = df['centrality_scaled'] * 10
+
 
 # Index calculation
 d_frame = df.copy()
 
-d_frame['surface'] = d_frame['surface'] * 0.140562249
-d_frame['highway'] = d_frame['highway'] * 0.269076305
-d_frame['maxspeed'] = d_frame['maxspeed'] * 0.24497992
-d_frame['lanes'] = d_frame['lanes'] * 0.140562249
-d_frame['centrality_scaled'] = d_frame['centrality_scaled'] * 0.092369478
-d_frame['width'] = d_frame['width'] * 0.112449799
-# centrality and oneway droped before calculating index
-#d_frame.drop(['centrality','oneway'], axis=1, inplace=True)
-# sum of weighted variables from row index 3 >>>>always
+d_frame['cycleway'] = d_frame['cycleway'] * 0.208074534
+d_frame['surface'] = d_frame['surface'] * 0.108695652
+d_frame['highway'] = d_frame['highway'] * 0.167701863
+d_frame['maxspeed'] = d_frame['maxspeed'] * 0.189440994
+d_frame['lanes'] = d_frame['lanes'] * 0.108695652
+d_frame['centrality_scaled'] = d_frame['centrality_scaled'] * 0.071428571
+d_frame['width'] = d_frame['width'] * 0.086956522
+d_frame['oneway'] = d_frame['oneway'] * 0.059006211
+ 
 # check for correctness
-d_frame['summation'] = (d_frame.loc[:, ['highway', 'surface',
+d_frame['summation'] = (d_frame.loc[:, ['highway','cycleway', 'surface',
                                         'maxspeed', 'lanes', 'width',
                                         'centrality_scaled']].sum(axis=1))
 # Get a value between 0 and 100 for bikeability index (maximum weight is 60)
-d_frame['index'] = ((d_frame['summation'] * 100) / 10)
+d_frame['index'] = (d_frame['summation'] * 10)
+
 # Final statistics index of city
 mean_index = np.average(d_frame['index'],weights=d_frame['weight'])
 max_index = d_frame['index'].max()
