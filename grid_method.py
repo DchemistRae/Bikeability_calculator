@@ -10,7 +10,7 @@ from tqdm import tqdm
 from os import path
 
 #Get bounding box for place
-place_name = 'Montreal, Canada'
+place_name = 'Emmendingen, Germany'
 area = ox.gdf_from_place(place_name)
 xmin,ymin,xmax,ymax = area.total_bounds
 
@@ -71,13 +71,13 @@ for i in tqdm(range(len(cell_centers))):
         exception_counts.append(i+1) 
         continue  
     
-    total_pop =output['features'][0]['properties']['total_pop']
-    size = (output['features'][0]['properties']['area'])/1e+6
-    pop_density = total_pop/size #per km^2
-    if pop_density <= 100:
-        print('low population density at grid{}'.format(i+1))
-        exception_counts.append(i+1)
-        continue 
+    #total_pop =output['features'][0]['properties']['total_pop']
+    #size = (output['features'][0]['properties']['area'])/1e+6
+    #pop_density = total_pop/size #per km^2
+    #if pop_density <= 100:
+    #    print('low population density at grid{}'.format(i+1))
+    #    exception_counts.append(i+1)
+    #    continue 
     geom = shape(polys)
     b =gpd.GeoDataFrame({'geometry':geom}, index=[0]) #polygon object returned
 
@@ -190,10 +190,12 @@ for i in tqdm(range(len(cell_centers))):
     df['centrality_scaled'] =(df['centrality'] - np.min(df['centrality'])) / (np.max(df['centrality']) - np.min(df['centrality']))
     df['centrality_scaled'] = df['centrality_scaled'] * 10
 
-    # Index calculation
-    
+    #Clean further before calculation
+    df.drop('centrality', axis=1, inplace=True)
+    df =df.T.fillna(df.mean(axis=1)).T
     d_frame = df.copy()
 
+    # Index calculation
     d_frame['cycleway'] = d_frame['cycleway'] * 0.208074534
     d_frame['surface'] = d_frame['surface'] * 0.108695652
     d_frame['highway'] = d_frame['highway'] * 0.167701863
@@ -238,7 +240,7 @@ else:
     result_d.to_csv('result_grid.csv',index = False)
 
 #Save dataframe to file as well 
-df_indexes.to_csv('index_data\{}_index.csv'.format(place_name.split(',')[0]))
+#df_indexes.to_csv('index_data\{}_index.csv'.format(place_name.split(',')[0]))
   
 
 
