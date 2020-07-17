@@ -1,4 +1,4 @@
-from sklearn import preprocessing
+#from sklearn import preprocessing
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import osmnx as ox
@@ -7,11 +7,11 @@ import numpy as np
 import networkx as nx
 from os import path
 
-place = 'Berlin, Germany'
+place = 'Montreal,Canada'
 #place = "Emmendingen, Germany"
 
 # Create and set osmnx to select important tags
-useful_tags_path = ['bridge', 'tunnel', 'oneway', 'lanes', 'ref', 'name',
+useful_tags_path = ['bridge', 'length', 'oneway', 'lanes', 'ref', 'name',
                     'highway', 'maxspeed', 'service', 'access', 'area','cycleway',
                     'landuse', 'width', 'est_width', 'junction', 'surface']
 ox.utils.config(useful_tags_path=useful_tags_path)
@@ -24,17 +24,15 @@ graph = ox.graph_from_place(place_name, network_type='bike',retain_all=True)
 #fig, ax = ox.plot_graph(graph)
 # plt.tight_layout()
 
-# Calculate edge degree centrality(connectedness)
+# # Calculate and add edge closeness centrality(connectedness)
 centrality = nx.degree_centrality(nx.line_graph(graph))
-# add to edge attribute
 nx.set_edge_attributes(graph, centrality, 'centrality')
 
 # Extract nodes and edges to geopandas from graph
 edges = ox.graph_to_gdfs(graph, nodes= False)
 
 # Remove unwanted columns and add weight variable
-edges['weight'] = edges.geometry.length
-cols = (['highway', 'cycleway','surface', 'maxspeed', 'weight', 'lanes', 'oneway',
+cols = (['highway', 'cycleway','surface', 'maxspeed', 'length', 'lanes', 'oneway',
          'width', 'centrality', 'geometry'])
 df = edges[cols]
 
@@ -66,14 +64,13 @@ df['highway'] = round(highway_cols['mean'])
 #cycleway column
 df['cycleway'] = df['cycleway'].str.replace(r'[^\w\s-]', '')
 cycleway_cols = (pd.DataFrame(df.cycleway.str.split(' ', expand = True)))
-cycleway_map = ({'opposite':9, 'lane':9, 'share_busway':8, 'shared_lane':8,
+cycleway_map = ({'opposite':9, 'lane':9, 'share_busway':8, 'shared_lane':8,'segregated':10,
                 'no':1, 'opposite_lane':9, 'crossing':10, 'track':10, 'designated':10,
                 'opposite_share_busway':8, 'seperate':10, 'shoulder':8})
 for column in cycleway_cols:
     cycleway_cols[column] = cycleway_cols[column].map(cycleway_map)
 cycleway_cols['mean'] = np.nanmean(cycleway_cols, axis=1)
 df['cycleway'] = round(cycleway_cols['mean'])
-#df['cycleway'] =df['cycleway'].fillna(df['highway']) #replace na with highway vlues
 
 # surface column
 df['surface'] = df['surface'].str.replace(r'[^\w\s-]', '')
@@ -100,7 +97,7 @@ lanes_map = {1: 10, 2: 9, 3: 5, 4: 5, 5: 3, 6: 3, 7: 2, 8: 1}
 df['lanes'] = df['lanes'].map(lanes_map)
 
 # oneway column
-oneway_map = {0: 5, 1: 10}
+oneway_map = {0: 5, 1: 10, -1:5}
 df['oneway'] = df['oneway'].map(oneway_map)
 
 # width column
@@ -110,40 +107,42 @@ df['width'] = round(df['width'])
 width_map = ({1: 1, 2: 2, 3: 5, 4: 7, 5: 9, 6: 10})
 df['width'] = df['width'].map(width_map)
 
-# normalize centrality column
-df['centrality_scaled'] =(df['centrality'] - np.min(df['centrality'])) / (np.max(df['centrality']) - np.min(df['centrality']))
-df['centrality_scaled'] = df['centrality_scaled'] * 10
+# normalize centrality column (between o and 10)
+df['centrality'] =((df['centrality'] - np.min(df['centrality'])) / (np.max(df['centrality']) - np.min(df['centrality']))) * 10
 
 
-# Index calculation
-d_frame = df.copy()
+#Replace NAs and proceed with a new dataframe
+df =df.T.fillna(df[['cycleway','highway', 'surface','maxspeed',
+            'lanes', 'width', 'oneway','centrality']].mean(axis=1)).T
+d_frame = df.copy(deep=True)
 
+# Multiply variables by weights
 d_frame['cycleway'] = d_frame['cycleway'] * 0.208074534
 d_frame['surface'] = d_frame['surface'] * 0.108695652
 d_frame['highway'] = d_frame['highway'] * 0.167701863
 d_frame['maxspeed'] = d_frame['maxspeed'] * 0.189440994
 d_frame['lanes'] = d_frame['lanes'] * 0.108695652
-d_frame['centrality_scaled'] = d_frame['centrality_scaled'] * 0.071428571
+d_frame['centrality'] = d_frame['centrality'] * 0.071428571
 d_frame['width'] = d_frame['width'] * 0.086956522
 d_frame['oneway'] = d_frame['oneway'] * 0.059006211
  
-# check for correctness
-d_frame['summation'] = (d_frame.loc[:, ['highway','cycleway', 'surface',
+# #Calculate final indexes Get a value between 0 and 100 for bikeability index
+d_frame['index'] = (d_frame.loc[:, ['highway','cycleway', 'surface',
                                         'maxspeed', 'lanes', 'width',
-                                        'centrality_scaled']].sum(axis=1))
-# Get a value between 0 and 100 for bikeability index (maximum weight is 60)
-d_frame['index'] = (d_frame['summation'] * 10)
+                                        'centrality']].sum(axis=1)) * 10
 
 # Final statistics index of city
-mean_index = np.average(d_frame['index'],weights=d_frame['weight'])
+mean_index = np.average(d_frame['index'],weights=d_frame['length'])
 max_index = d_frame['index'].max()
 min_index = d_frame['index'].min()
+std_index = d_frame['index'].std()
 
 # Plot result
 #d_frame.plot(column = 'index',legend = True)
 
 #Result dictionary
-result = ({'place':place,'average_index':mean_index, 'max_index':max_index,'min_index':min_index})
+result = ({'place':place,'average_index':mean_index, 'max_index':max_index,
+            'min_index':min_index, 'std_index':std_index})
 
 #Save to file
 if path.exists("result_cities.csv"):
