@@ -1,4 +1,4 @@
-#from sklearn import preprocessing
+
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import osmnx as ox
@@ -7,8 +7,7 @@ import numpy as np
 import networkx as nx
 from os import path
 
-place = 'Montreal,Canada'
-#place = "Emmendingen, Germany"
+place = "Haguenau, France"
 
 # Create and set osmnx to select important tags
 useful_tags_path = ['bridge', 'length', 'oneway', 'lanes', 'ref', 'name',
@@ -18,7 +17,8 @@ ox.utils.config(useful_tags_path=useful_tags_path)
 
 # Create basic city graph
 place_name = place
-graph = ox.graph_from_place(place_name, network_type='bike',retain_all=True)
+cf = '["access"!~"private|no"]' 
+graph = ox.graph_from_place(place_name, network_type='bike',retain_all=True, custom_filter=cf)
 
 # Plot graph of place
 #fig, ax = ox.plot_graph(graph)
@@ -110,11 +110,12 @@ df['width'] = df['width'].map(width_map)
 # normalize centrality column (between o and 10)
 df['centrality'] =((df['centrality'] - np.min(df['centrality'])) / (np.max(df['centrality']) - np.min(df['centrality']))) * 10
 
+#Switch to new df for calculation
+d_frame = df.copy(deep =True)
 
 #Replace NAs and proceed with a new dataframe
-df =df.T.fillna(df[['cycleway','highway', 'surface','maxspeed',
-            'lanes', 'width', 'oneway','centrality']].mean(axis=1)).T
-d_frame = df.copy(deep=True)
+d_frame =d_frame.T.fillna(d_frame[['cycleway','highway', 'surface','maxspeed',
+           'lanes', 'width', 'oneway','centrality']].mean(axis=1)).T
 
 # Multiply variables by weights
 d_frame['cycleway'] = d_frame['cycleway'] * 0.208074534
@@ -128,9 +129,10 @@ d_frame['oneway'] = d_frame['oneway'] * 0.059006211
  
 # #Calculate final indexes Get a value between 0 and 100 for bikeability index
 d_frame['index'] = (d_frame.loc[:, ['highway','cycleway', 'surface',
-                                        'maxspeed', 'lanes', 'width',
-                                        'centrality']].sum(axis=1)) * 10
-
+                                        'maxspeed', 'lanes', 'width', 'oneway',
+                                       'centrality']].sum(axis=1)) * 10
+#d_frame['index'] = (np.nanmean(d_frame[['cycleway','highway', 'surface', 'maxspeed', 'lanes', 'width', 'oneway',
+#                                           'centrality']], axis=1,dtype='float64')) * 80.00000096
 # Final statistics index of city
 mean_index = np.average(d_frame['index'],weights=d_frame['length'])
 max_index = d_frame['index'].max()
@@ -157,5 +159,5 @@ else:
 
 
 ###########
-#dna = d_frame.dropna()
-#np.average(dna['index'],weights=dna['weight'])
+df.to_csv('dataframes0\{}_wholecity_index.csv'.format(place_name.split(',')[0]))
+d_frame.to_csv('dataframes1\{}_wholecity_index.csv'.format(place_name.split(',')[0]))

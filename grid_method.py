@@ -8,11 +8,10 @@ import requests
 import geojson
 from tqdm import tqdm
 from os import path
-from ors_keys import key1 as key
 
 
 #Get bounding box for place
-place_name = 'Freiburg, Germany'
+place_name = 'Freiburg,Germany'
 area = ox.gdf_from_place(place_name)
 xmin,ymin,xmax,ymax = area.total_bounds
 
@@ -37,52 +36,29 @@ for i in range(cols):
     XrightOrigin = XrightOrigin + width
 
 #Ensure the grids are within the polygon
-cell_centers = []
+grid_list = []
 for i in range(len(polygons)):
     p = Point(polygons[i].centroid.x, polygons[i].centroid.y)
-    if p.within(area.geometry.iloc[0]) == True:
-        cell_centers.append([polygons[i].centroid.x, polygons[i].centroid.y])
+    geome = shape(polygons[i])
+    q =gpd.GeoDataFrame({'geometry':geome}, index=[0])
+    if area.geometry.iloc[0].contains(polygons[i])== True:
+        grid_list.append(q)
+    #elif p.within(area.geometry.iloc[0]) == True and area.geometry.iloc[0].contains(polygons[i])== False:
+    elif area.geometry.iloc[0].intersects(polygons[i]):
+        #grid_list.append(polygons[i])
+        clip = gpd.clip(area, q)
+        grid_list.append(clip)
+    
 
 #Initialize important variables
 dflist = []
-exception_counts = []
+exception_grids = []
 dfs = []
 
-for i in tqdm(range(len(cell_centers))):
-    #Retrieve isochrones for center geometries of grids (change index)
-    body = {"locations":[cell_centers[i]],"range":[720],"attributes":["area","reachfactor","total_pop"],"intersections":"true","interval":720,"location_type":"start","range_type":"time","area_units":"m","units":"m"}
-    #print('step {} of {}'.format(i+1, len(cell_centers)))
-    headers = {
-        'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
-        'Authorization': key,
-        'Content-Type': 'application/json; charset=utf-8'
-    }
-    call = requests.post('https://api.openrouteservice.org/v2/isochrones/cycling-regular', json=body, headers=headers)
-    #print(call.status_code, call.reason)
-
-    #print(call.text)
-    try:
-        output = call.json()
-        polys = output['features'][0]['geometry']
-        pass
-    except KeyError as e:
-        print('{} at grid {}, skip grid'.format(e, i+1))
-        exception_counts.append(i+1) 
-        continue 
-    except Exception as e:
-        print('{} at grid {}, skip grid'.format(e, i+1))
-        exception_counts.append(i+1) 
-        continue  
-    
-    #total_pop =output['features'][0]['properties']['total_pop']
-    #size = (output['features'][0]['properties']['area'])/1e+6
-    #pop_density = total_pop/size #per km^2
-    #if pop_density <= 100:
-    #    print('low population density at grid{}'.format(i+1))
-    #    exception_counts.append(i+1)
-    #    continue 
-    geom = shape(polys)
-    b =gpd.GeoDataFrame({'geometry':geom}, index=[0]) #polygon object returned
+for i in tqdm(range(len(grid_list))):
+   
+    #geom = shape(grid_list[i])
+    #b =gpd.GeoDataFrame({'geometry':geom}, index=[0]) #polygon object returned
 
 
     #graph
@@ -90,8 +66,16 @@ for i in tqdm(range(len(cell_centers))):
     'name', 'highway', 'maxspeed', 'surface', 'area', 
     'landuse', 'width', 'est_width', 'junction','cycleway']                 
     ox.utils.config(useful_tags_path=useful_tags_path)
-    box_graph =ox.graph_from_polygon(b.geometry.iloc[0], network_type='bike',retain_all=True)
-
+    
+    try:
+        cf = '["access"!~"private|no"]' 
+        box_graph =ox.graph_from_polygon(grid_list[i].geometry.iloc[0], network_type='bike',retain_all=True, custom_filter=cf)
+        pass
+    except Exception as e:
+        print('{} at grid {}, skip grid'.format(e, i+1)) 
+        exception_grids.append(i+1) 
+        continue    
+    
     # Plot graph of place
     #fig, ax = ox.plot_graph(box_graph)
 
@@ -101,7 +85,7 @@ for i in tqdm(range(len(cell_centers))):
 
     # Extract nodes and edges to geopandas from graph
     edges = ox.graph_to_gdfs(box_graph, nodes= False)
-
+     
     # Select only the important variables
     cols = (['highway','cycleway', 'surface', 'maxspeed', 'length', 'lanes', 'oneway',
             'width', 'centrality', 'geometry'])
@@ -110,7 +94,7 @@ for i in tqdm(range(len(cell_centers))):
         pass
     except KeyError as e:
         print('{} at grid {}, skip grid'.format(e, i+1)) 
-        exception_counts.append(i+1) 
+        exception_grids.append(i+1) 
         continue      
             
     # Set appropriate data types
@@ -188,11 +172,13 @@ for i in tqdm(range(len(cell_centers))):
 
     # normalize centrality column (between o and 10)
     df['centrality'] =((df['centrality'] - np.min(df['centrality'])) / (np.max(df['centrality']) - np.min(df['centrality']))) * 10
-    
-    #Replace NAs and proceed with a new dataframe
-    #df =df.T.fillna(df[['cycleway','highway', 'surface','maxspeed',
-     #   'lanes', 'width', 'oneway','centrality']].mean(axis=1)).T
+   
+    #Switch to new df for calculation
     d_frame = df.copy(deep =True)
+
+    #Replace NAs and proceed with a new dataframe
+    d_frame =d_frame.T.fillna(d_frame[['cycleway','highway', 'surface','maxspeed',
+        'lanes', 'width', 'oneway','centrality']].mean(axis=1)).T
 
     # Multiply variables by weights
     d_frame['cycleway'] = d_frame['cycleway'] * 0.208074534
@@ -206,13 +192,12 @@ for i in tqdm(range(len(cell_centers))):
  
 
     #Calculate final indexes Get a value between 0 and 100 for bikeability index
-    #d_frame['index'] = (d_frame.loc[:, ['cycleway','highway', 'surface',
-    #                                       'maxspeed', 'lanes', 'width', 'oneway',
-    #                                      'centrality']].sum(axis=1))  * 10
-    d_frame['index'] = (np.nanmean(d_frame[['cycleway','highway', 'surface', 'maxspeed', 'lanes', 'width', 'oneway',
-                                           'centrality']], axis=1,dtype='float64')) * 80.00000096
-    #d_frame['index'] =d_frame[['cycleway','highway', 'surface', 'maxspeed', 'lanes', 'width', 'oneway',
-    #                                        'centrality']].mean(axis = 0, skipna = True)
+    d_frame['index'] = (d_frame.loc[:, ['cycleway','highway', 'surface',
+                                           'maxspeed', 'lanes', 'width', 'oneway',
+                                          'centrality']].sum(axis=1))  * 10
+    #d_frame['index'] = (np.nanmean(d_frame[['cycleway','highway', 'surface', 'maxspeed', 'lanes', 'width', 'oneway',
+     #                                      'centrality']], axis=1,dtype='float64')) * 80.
+    
     d_frame['grid_index'] =  np.average(d_frame['index'],weights=d_frame['length'])
     dflist.append(d_frame)
     dfs.append(df)
@@ -224,9 +209,9 @@ results = ({'place':place_name,
 'max_index':df_indexes['index'].max(), 
 'min_index':df_indexes['index'].min(),
 'std_index':df_indexes['index'].std(),
-'grids':len(cell_centers),
+'grids':len(grid_list),
 'nsegments':len(df_indexes),
-'unused_grids':len(exception_counts)})
+'unused_grids':len(exception_grids)})
 
 # Plot result
 #plot = d_frame.plot(column = 'index',legend = True)
