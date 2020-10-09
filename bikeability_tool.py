@@ -218,7 +218,6 @@ def bikeability(place, scale = 'city',data = False):
             ox.utils.config(useful_tags_path=useful_tags_path)
             
             try:
-                #cf = '["access"!~"private|no"]' , custom_filter=cf
                 box_graph =ox.graph_from_polygon(grid_list[i].geometry.iloc[0], network_type='bike',retain_all=True)
                 pass
             except Exception as e:
