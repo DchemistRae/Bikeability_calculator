@@ -21,4 +21,4 @@
     a = bikeability('Freiburg, Germany', scale = 'city')... for city scale approach
     a,b = bikeability('Freiburg, Germany', scale = 'city', data = True)
     
-    ******** Works on python ver 3.6 **********
+    ******** Developed on python ver 3.6 **********
