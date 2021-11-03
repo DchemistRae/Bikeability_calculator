@@ -1,13 +1,13 @@
-import osmnx as ox 
+
+import osmnx as ox
 import networkx as nx 
 import pandas as pd 
 import geopandas as gpd
-import numpy as np 
-from shapely.geometry import shape, Polygon, Point
-import requests
-import geojson
 from tqdm import tqdm
-from os import path
+from shapely.geometry import shape, Polygon, Point
+import warnings
+warnings.filterwarnings(action='ignore', message='Mean of empty slice')
+import numpy as np 
 
 
 def bikeability(place, scale = 'city',data = False):
@@ -36,28 +36,40 @@ def bikeability(place, scale = 'city',data = False):
         place = place
 
         # Create and set osmnx to select important tags
-        useful_tags_path = ['bridge', 'length', 'oneway', 'lanes', 'ref', 'name',
+        useful_tags_way = ['bridge', 'length', 'oneway', 'lanes', 'ref', 'name',
                             'highway', 'maxspeed', 'service', 'access', 'area', 'cycleway',
                             'landuse', 'width', 'est_width', 'junction', 'surface']
-        ox.utils.config(useful_tags_path=useful_tags_path)
+    
+        ox.utils.config(useful_tags_way = useful_tags_way) # = useful_tags_path  change here1
 
         # Create basic city graph
         place_name = place
-        graph = ox.graph_from_place(place_name, network_type='bike', retain_all=True)
+        graph = ox.graph_from_place(place_name, network_type='all', retain_all=True)
 
         # # Calculate and add edge closeness centrality(connectedness)
         centrality = nx.degree_centrality(nx.line_graph(graph))
         nx.set_edge_attributes(graph, centrality, 'centrality')
 
         # Extract nodes and edges to geopandas from graph
-        edges = ox.graph_to_gdfs(graph, nodes=False)
+        #edges = ox.graph_to_gdfs(graph, nodes=False)
+        try:
+            edges = ox.graph_to_gdfs(graph, nodes= False)
+            pass
+        except Exception as e:
+            print('{} at {}'.format(e, place))
+            
 
         # Remove unwanted columns and add weight variable
-        cols = (['highway', 'cycleway', 'surface', 'maxspeed', 'length', 'lanes', 'oneway',
-                'width', 'centrality', 'geometry'])
-        df = edges[cols]
+        cols = ['highway', 'cycleway', 'surface', 'maxspeed', 'length', 'lanes', 'oneway',
+                'width', 'centrality', 'geometry']
+        
+        try:
+            df = edges.loc[:,cols]
+        except KeyError as e:
+            print (e)
 
         # Set appropriate data types
+
         df['maxspeed'] = pd.to_numeric(
             df['maxspeed'], errors='coerce', downcast='integer')
         df['lanes'] = pd.to_numeric(
@@ -69,9 +81,10 @@ def bikeability(place, scale = 'city',data = False):
         df['oneway'] = df['oneway'].astype(int)
         df['cycleway'] = df['cycleway'].astype(str)
 
+
         # Dataframe cleaning and preprocessing
         # highway column
-        df['highway'] = df['highway'].str.replace(r'[^\w\s-]', '')
+        df['highway'] = df['highway'].str.replace(r'[^\w\s-]', '', regex = True)
         highway_cols = (pd.DataFrame(df.highway.str.split(' ', expand=True)))
         highway_map = ({'service': 6, 'None': np.nan, 'residential': 8, 'unclassified': 7, 'footway': 7, 'track': 5,
                         'tertiary': 6, 'living_street': 9, 'path': 5, 'pedestrian': 7, 'secondary': 5,
@@ -83,7 +96,7 @@ def bikeability(place, scale = 'city',data = False):
         df['highway'] = round(highway_cols['mean'])
 
         # cycleway column
-        df['cycleway'] = df['cycleway'].str.replace(r'[^\w\s-]', '')
+        df['cycleway'] = df['cycleway'].str.replace(r'[^\w\s-]', '', regex = True)
         cycleway_cols = (pd.DataFrame(df.cycleway.str.split(' ', expand=True)))
         cycleway_map = ({'opposite': 9, 'lane': 9, 'share_busway': 8, 'shared_lane': 8, 'segregated': 10,
                         'no': 1, 'opposite_lane': 9, 'crossing': 10, 'track': 10, 'designated': 10,
@@ -94,7 +107,7 @@ def bikeability(place, scale = 'city',data = False):
         df['cycleway'] = round(cycleway_cols['mean'])
 
         # surface column
-        df['surface'] = df['surface'].str.replace(r'[^\w\s-]', '')
+        df['surface'] = df['surface'].str.replace(r'[^\w\s-]', '', regex=True)
         surface_cols = (pd.DataFrame(df.surface.str.split(' ', expand=True)))
         surface_map = ({'asphalt': 10, 'paved': 10, 'cobblestone': 5, 'fine_gravel': 9,
                         'ground': 7, 'sett': 6, 'gravel': 7, 'metal': 6, 'compacted': 10,
@@ -166,7 +179,7 @@ def bikeability(place, scale = 'city',data = False):
     else:
         #Get bounding box for place
         place_name = place
-        area = ox.gdf_from_place(place_name)
+        area = ox.geocode_to_gdf(place_name)   # graph first
         xmin,ymin,xmax,ymax = area.total_bounds
 
         #divide into grids x = lon, y = lat 
@@ -195,6 +208,7 @@ def bikeability(place, scale = 'city',data = False):
             p = Point(polygons[i].centroid.x, polygons[i].centroid.y)
             geome = shape(polygons[i])
             q =gpd.GeoDataFrame({'geometry':geome}, index=[0])
+            q = q.set_crs("EPSG:4326")
             if area.geometry.iloc[0].contains(polygons[i])== True:
                 grid_list.append(q)
             #elif p.within(area.geometry.iloc[0]) == True and area.geometry.iloc[0].contains(polygons[i])== False:
@@ -212,10 +226,10 @@ def bikeability(place, scale = 'city',data = False):
         for i in tqdm(range(len(grid_list))):
         
             #graph
-            useful_tags_path = ['bridge', 'length', 'oneway', 'lanes', 'ref',
+            useful_tags_way = ['bridge', 'length', 'oneway', 'lanes', 'ref',
             'name', 'highway', 'maxspeed', 'surface', 'area', 
             'landuse', 'width', 'est_width', 'junction','cycleway']                 
-            ox.utils.config(useful_tags_path=useful_tags_path)
+            ox.utils.config(useful_tags_way = useful_tags_way) # = =useful_tags_path change 2
             
             try:
                 box_graph =ox.graph_from_polygon(grid_list[i].geometry.iloc[0], network_type='bike',retain_all=True)
@@ -230,13 +244,19 @@ def bikeability(place, scale = 'city',data = False):
             nx.set_edge_attributes(box_graph, centrality, 'centrality')
 
             # Extract nodes and edges to geopandas from graph
-            edges = ox.graph_to_gdfs(box_graph, nodes= False)
+            try:
+                edges = ox.graph_to_gdfs(box_graph, nodes= False)
+                pass
+            except Exception as e:
+                print('{} at grid {}, skip grid'.format(e, i+1)) 
+                exception_grids.append(i+1) 
+                continue 
             
             # Select only the important variables
-            cols = (['highway','cycleway', 'surface', 'maxspeed', 'length', 'lanes', 'oneway',
-                    'width', 'centrality', 'geometry'])
+            cols = ['highway','cycleway', 'surface', 'maxspeed', 'length', 'lanes', 'oneway',
+                    'width', 'centrality', 'geometry']
             try:
-                df = edges[cols]
+                df = edges.loc[:,cols]
                 pass
             except KeyError as e:
                 print('{} at grid {}, skip grid'.format(e, i+1)) 
@@ -257,7 +277,7 @@ def bikeability(place, scale = 'city',data = False):
 
             # Dataframe cleaning and preprocessing
             # highway column
-            df['highway'] = df['highway'].str.replace(r'[^\w\s-]', '')
+            df['highway'] = df['highway'].str.replace(r'[^\w\s-]', '', regex = True)
             highway_cols = (pd.DataFrame(df.highway.str.split(' ', expand = True)))
             highway_map = ({'service': 6, 'None': np.nan, 'residential': 8, 'unclassified': 7, 'footway': 7, 'track': 5, 'tertiary_link':6,
                             'tertiary': 6, 'living_street': 9, 'path': 5, 'pedestrian': 7, 'secondary': 5, 'secondary_link':5,
@@ -269,7 +289,7 @@ def bikeability(place, scale = 'city',data = False):
             df['highway'] = round(highway_cols['mean'])
 
             #cycleway column
-            df['cycleway'] = df['cycleway'].str.replace(r'[^\w\s-]', '')
+            df['cycleway'] = df['cycleway'].str.replace(r'[^\w\s-]', '', regex = True)
             cycleway_cols = (pd.DataFrame(df.cycleway.str.split(' ', expand = True)))
             cycleway_map = ({'opposite':9, 'lane':9, 'share_busway':8, 'shared_lane':8,'segregated':10,
                             'no':1, 'opposite_lane':9, 'crossing':10, 'track':10, 'designated':10,
@@ -280,7 +300,7 @@ def bikeability(place, scale = 'city',data = False):
             df['cycleway'] = round(cycleway_cols['mean'])
 
             # surface column
-            df['surface'] = df['surface'].str.replace(r'[^\w\s-]', '')
+            df['surface'] = df['surface'].str.replace(r'[^\w\s-]', '', regex = True) #''
             surface_cols = (pd.DataFrame(df.surface.str.split(' ', expand = True)))
             surface_map = ({'asphalt': 10, 'paved': 10, 'cobblestone': 3, 'fine_gravel': 9,
                             'ground': 6, 'sett': 4, 'gravel': 7, 'metal': 7, 'compacted': 9,
