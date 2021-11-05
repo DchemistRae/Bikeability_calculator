@@ -6,11 +6,11 @@ with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 # only specify install_requires if not in RTD environment
-if os.getenv("READTHEDOCS") == "True":
-    INSTALL_REQUIRES = []
-else:
-    with open("requirements.txt") as f:
-        INSTALL_REQUIRES = [line.strip() for line in f.readlines()]
+#if os.getenv("READTHEDOCS") == "True":
+ #   INSTALL_REQUIRES = []
+#else:
+with open("requirements.txt") as f:
+    INSTALL_REQUIRES = [line.strip() for line in f.readlines()]
 
 setup(
     name= 'bikeability',
