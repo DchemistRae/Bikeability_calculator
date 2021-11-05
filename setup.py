@@ -18,7 +18,7 @@ setup(
     description= 'An automated bikeabililty assessment tool.',
     long_description= long_description,
     long_description_content_type= 'text/markdown',
-    py_modules= ['bikeability'],
+    #py_modules= ['bikeability'],
     #package_dir={'':'src'},
     classifiers = [
     'Intended Audience :: Researchers/ SCience',
@@ -28,6 +28,6 @@ setup(
     url='https://github.com/DchemistRae/Bikeability_calculator',
     author='Raymond Asimhi',
     author_email='rasimhi@gmx.de',
-    packages=find_packages(),
+    packages= ['bikeability'],
     install_requires='INSTALL_REQUIRES',
 )   
