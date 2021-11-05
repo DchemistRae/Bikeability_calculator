@@ -6,8 +6,8 @@ with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 # only specify install_requires if not in RTD environment
-#if os.getenv("READTHEDOCS") == "True":
- #   INSTALL_REQUIRES = []
+if os.getenv("READTHEDOCS") == "True":
+    INSTALL_REQUIRES = []
 #else:
 with open("requirements.txt") as f:
     INSTALL_REQUIRES = [line.strip() for line in f.readlines()]
@@ -18,8 +18,6 @@ setup(
     description= 'An automated bikeabililty assessment tool.',
     long_description= long_description,
     long_description_content_type= 'text/markdown',
-    #py_modules= ['bikeability'],
-    #package_dir={'':'src'},
     classifiers = [
     'Intended Audience :: Researchers/ SCience',
     'Operating System :: OS Independent',

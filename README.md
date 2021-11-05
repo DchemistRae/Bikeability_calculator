@@ -23,12 +23,11 @@ This tool uses two approaches to calculate bikeability of the place of interest,
 ### Dependencies
 
 * Python 3.6 or above
-* OSMNx
 * tqdm
-* Networkx
 * Shapely
 * Geopandas & Pandas
 * Numpy
+* OSMNx
 
 
 ### Installing
@@ -41,17 +40,17 @@ pip install -e git+https://github.com/DchemistRae/Bikeability_calculator#egg=bik
 
 ### Executing program
 
-* Method 1 - This will return an index using approach 1 described above
+* Import the installed module
+```
+from bikeability.bikeability import bikeability
+```
+* Run the tool : Default usage
 ```
 fr_index = bikeability('Freiburg, Germany')
 ```
-* Method 2 - This will return an index using approach 2 described above
+* Run the tool : If geodataframe is required
 ```
-fr_grided_index = bikeability('Freiburg, Germany', scale = grid)
-```
-* Method 3 - This will return a geopandas dataframe of along with index
-```
-fr_index, gpd_df = bikeability('Freiburg, Germany', data = True)
+fr_index, gpd_df = bikeability('Freiburg, Germany', scale = 'city', data = True)
 ```
 
 
