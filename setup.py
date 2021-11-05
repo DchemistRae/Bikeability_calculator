@@ -19,7 +19,7 @@ setup(
     long_description= long_description,
     long_description_content_type= 'text/markdown',
     py_modules= ['bikeability'],
-    package_dir={'':'src'},
+    #package_dir={'':'src'},
     classifiers = [
     'Intended Audience :: Researchers/ SCience',
     'Operating System :: OS Independent',
