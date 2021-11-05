@@ -33,13 +33,9 @@ This tool uses two approaches to calculate bikeability of the place of interest,
 
 ### Installing
 
-* First install the depencies above or use the code snippet below
+* Install the dependencies above and install from github
 ```
-pip3 install -r dependencies.txt
-```
-* Run the code below to install package directly from github 
-```
-pip install -e git+https://github.com/DchemistRae/Bikeability_calculator#egg=bikeability_tool
+pip install -e git+https://github.com/DchemistRae/Bikeability_calculator#egg=bikeability
 ```
 
 

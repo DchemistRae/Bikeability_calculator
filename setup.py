@@ -20,5 +20,5 @@ setup(
     url='https://github.com/DchemistRae/Bikeability_calculator',
     author='Raymond Asimhi',
     author_email='rasimhi@gmx.de',
-    install_requires = ['tqdm ~= 4.62.3', 'shapely ~=1.7.1', 'osmnx ~=1.1.1']
+    packages=find_packages()
 )   
