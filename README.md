@@ -92,6 +92,6 @@ This project is licensed under the MIT Open-Source License - see the LICENSE.txt
 
 ## References
 
-* Asimhi R.(2020), Dynamic approach to evaluate Bikeability using Open-source data, MSc thesis, Albert Ludwig University, [Unpublished master's thesis].
+* Asimhi R. (2020), Dynamic approach to evaluate Bikeability using Open-source data, MSc thesis, Albert Ludwig University, [Unpublished master's thesis].
 * [Loidl & Zagel (2014)](https://www.researchgate.net/profile/Bernhard-Zagel/publication/269408093_Wie_sicher_ist_sicher-Innovatives_Kostenmodell_zur_Ermittlung_des_Gefahrdungspotenzials_auf_Radwegen/links/5572151408aeb6d8c0166ca0/Wie-sicher-ist-sicher-Innovatives-Kostenmodell-zur-Ermittlung-des-Gefaehrdungspotenzials-auf-Radwegen.pdf)
 * [Winters et. al (2013)](https://journals.sagepub.com/doi/abs/10.1068/b38185)
