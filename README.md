@@ -97,4 +97,4 @@ This project is licensed under the MIT Open-Source License - see the LICENSE.txt
 * [Winters et. al (2013)](https://journals.sagepub.com/doi/abs/10.1068/b38185)
 
 ## Results Screenshots
-![Screenshot - 1](https://github.com/DchemistRae/Bikeability_calculator/blob/master/results/Some%20results%20from%20tool.pdf)
+![Screenshot - 1](https://github.com/DchemistRae/Bikeability_calculator/blob/master/results/1-Some%20results%20from%20tool.png)
