@@ -22,7 +22,7 @@ This tool uses two approaches to calculate bikeability of the place of interest,
 
 ### Dependencies
 
-* Python 3.6 or above
+* Python 3.6 to 3.8
 * tqdm
 * Shapely
 * Geopandas & Pandas
@@ -85,6 +85,8 @@ JesJehle
 
 * 0.0.1
     * Initial Release
+* 0.0.2
+    * Bug fixes
 
 ## License
 
